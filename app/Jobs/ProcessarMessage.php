@@ -8,7 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-
+use Log;
 class ProcessarMessage implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -38,10 +38,10 @@ class ProcessarMessage implements ShouldQueue
 
                 for ($i = $message->retries; $i <= 2; $i++) {
 
-                    \Log::info('Processando tentativa de envio: ' . $i . ' da mensagem: ' . $message->id);
-                    \Log::info('Retries: ' . $message->retries);
-                    \Log::info('Status: ' . $message->status);
-                    \Log::info('--------------------------------');
+                    Log::channel('message')->info('Processando tentativa de envio: ' . $i+1 . ' da mensagem: ' . $message->id);
+                    Log::channel('message')->info('Retries: ' . $message->retries);
+                    Log::channel('message')->info('Status: ' . $message->status);
+                    Log::channel('message')->info('--------------------------------');
 
                     $message->retries = $message->retries + 1;
                     $message->save();
@@ -58,7 +58,7 @@ class ProcessarMessage implements ShouldQueue
                     if ($selectedStatus == Message::SENT) {
                         $message->status = $selectedStatus;
                         $message->save();
-                        \Log::info('Mensagem enviada com sucesso: ' . $message->id);
+                        Log::channel('message')->info('Mensagem ' . $message->id . ' enviada com sucesso');
                         break;
                     }
 
@@ -68,7 +68,7 @@ class ProcessarMessage implements ShouldQueue
                 if ($message->status == Message::PROCESSING) {
                     $message->status = Message::FAILED;
                     $message->save();
-                    \Log::info('Falha no envio da mensagem: ' . $message->id);
+                    Log::channel('message')->error('Falha no envio da mensagem: ' . $message->id);
                 }
             }
         } catch (\Throwable $th) {
