@@ -1,0 +1,32 @@
+services:
+    php:
+        container_name: api-messages
+        build:
+            context: .
+            dockerfile: .docker/apache/dockerfile
+        image: 'ubuntu-laravel'
+        ports:
+            - 80:80
+        volumes:
+            - .:/var/www/html
+        networks:
+          - app-network
+
+    mysqlsrv:
+      container_name: messages_mysql
+      image: mysql:5.7
+      command: --explicit_defaults_for_timestamp
+      environment:
+        MYSQL_ROOT_PASSWORD: "H.dEdjSUmElWDIw9eu572"
+        MYSQL_DATABASE: "messages"
+      ports:
+        - "3306:3306"
+      volumes:
+        - .:/var/lib/sql
+      networks:
+        - app-network
+
+
+networks: 
+  app-network:
+    driver: bridge

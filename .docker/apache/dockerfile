@@ -1,0 +1,21 @@
+FROM php:8.1-apache
+
+RUN apt-get update \
+  && apt-get install -y zlib1g-dev libzip-dev libjpeg-dev libpng-dev  wget gnupg\
+  && docker-php-ext-install opcache
+
+RUN docker-php-ext-configure zip \
+  && docker-php-ext-configure gd --with-jpeg \
+  && docker-php-ext-install zip gd
+  
+RUN apt-get update && apt-get upgrade -y
+RUN docker-php-ext-install pdo pdo_mysql
+
+COPY .docker/apache/vhost.conf /etc/apache2/sites-available/000-default.conf
+COPY .docker/php/cacert.pem /usr/local/etc/php/cacert.pem
+
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+RUN a2enmod rewrite
+
+WORKDIR /var/www/html
