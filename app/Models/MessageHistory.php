@@ -8,4 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class MessageHistory extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['status', 'message_id'];
+    
 }
