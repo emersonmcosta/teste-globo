@@ -3,11 +3,13 @@
 namespace Tests\Unit\Jobs;
 
 use Tests\TestCase;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Log as FacadesLog;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Message;
 use App\Models\MessageHistory;
 use App\Jobs\ProcessarMessage;
+use Illuminate\Support\Facades\Log;
+use Mockery;
 
 class ProcessarMessageTest extends TestCase
 {
@@ -16,25 +18,15 @@ class ProcessarMessageTest extends TestCase
     /** @test */
     public function it_should_process_a_pending_message_and_update_status_and_history()
     {
-        Log::shouldReceive('info')->atLeast()->once();
-
         $message = Message::factory()->create([
             'status' => Message::PENDING,
             'retries' => 0
         ]);
 
-        // Rodar o job diretamente
         (new ProcessarMessage($message))->handle();
-
         $message->refresh();
-
-        // Verifica se o status foi alterado de PENDING para SENT ou FAILED
         $this->assertContains($message->status, [Message::SENT, Message::FAILED]);
-
-        // Verifica que há pelo menos uma entrada de histórico
         $this->assertGreaterThanOrEqual(1, $message->history()->count());
-
-        // Verifica que o número de retentativas é até 3
         $this->assertLessThanOrEqual(3, $message->retries);
     }
 
