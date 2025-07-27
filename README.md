@@ -99,7 +99,7 @@ Execute os testes com:
 
 - [ ] Adicionar autenticação via Passport ou Sanctum.
 - [ ] Melhorar cobertura de testes (unitários e integração).
-- [ ] Documentação Swagger interativa via `l5-swagger`.
+- [X] Documentação Swagger interativa via `l5-swagger`.
 - [ ] Monitoramento e dashboard para filas (Laravel Horizon).
 - [ ] Deploy automatizado (CI/CD com GitHub Actions ou GitLab CI).
 - [ ] Caching avançado com Redis.
