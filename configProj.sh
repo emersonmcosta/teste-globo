@@ -1,5 +1,4 @@
 echo "Building and running project..."
-echo -e "\033[33mTexto em amarelo\033[0m"
 docker-compose up -d --build --force-recreate
 echo "Copying .env file..."
 docker exec -i api-messages cp -r .env.example .env
