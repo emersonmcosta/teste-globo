@@ -29,6 +29,7 @@ cd teste-globo
 ### 2. Rodar script de instalação ( faz todo processo automático )
 
 ```bash
+chmod +x configProj.sh
 sh configProj.sh
 ```
 
